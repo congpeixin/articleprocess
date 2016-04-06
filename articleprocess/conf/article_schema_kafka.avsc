@@ -1,0 +1,10 @@
+{
+ "namespace": "cn.datapark.avro",
+ "type": "record",
+ "name": "kafkaarticle",
+ "fields": [
+     {"name": "src_url", "type": "string"},
+     {"name": "pagenumber", "type": "int"},
+     {"name": "content", "type": "string"}
+ ]
+}

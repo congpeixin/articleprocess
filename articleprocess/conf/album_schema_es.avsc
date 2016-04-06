@@ -1,0 +1,22 @@
+{
+ "namespace": "cn.datapark.avro",
+ "type": "record",
+ "name": "esalbummeta",
+ "fields": [
+     {"name": "src_name", "type": "string","default":""},
+     {"name": "src_url", "type": "string"},
+     {"name": "title", "type": "string","default":""},
+     {"name": "desc", "type": "string","default":""},
+     {"name": "tags", "type":{"type":"array","items":"string"},"default":[""]},
+     {"name": "author", "type": "string","default":""},
+     {"name": "seentime", "type":"string","default":""},
+     {"name": "src_createtime", "type": "string","default":""},
+     {"name": "src_updatetime", "type": "string","default":""},
+     {"name": "count", "type": "int"},
+     {"name": "imageset","type": {"type":"array","items":cn.datapark.avro.imagemeta}},
+     {"name": "type", "type": "string"},
+     {"name": "src_id", "type": "string"},
+     {"name": "id", "type": "string","default":""},
+     {"name": "category", "type": "string","default":"default"}
+ ]
+}

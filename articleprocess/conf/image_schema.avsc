@@ -1,0 +1,17 @@
+{
+ "namespace": "cn.datapark.avro",
+ "type": "record",
+ "name": "imagemeta",
+ "fields": [
+     {"name": "img_title", "type":"string","default":""},
+     {"name": "img_desc", "type": "string","default":""},
+     {"name": "img_tags", "type":{"type":"array","items":"string"},"default":[""]},
+     {"name": "img_src_url", "type": "string"},
+     {"name": "img_store_location", "type":"string","default":""},
+     {"name": "img_store_id", "type": "string","default":""},
+     {"name": "img_width", "type": "int","default":0},
+     {"name": "img_heigth", "type": "int","default":0},
+     {"name": "img_md5", "type": "string","default":""},
+     {"name": "img_size", "type": "long","default":0}
+ ]
+}

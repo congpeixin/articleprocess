@@ -1,0 +1,46 @@
+{
+  "mappings": {
+    "article": {
+      "properties": {
+        "tags": {
+          "type": "string"
+        },
+        "author": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        },
+        "src_name": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "src_url": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "imagestorelocation": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "imagestoreid": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "isimagereplaced": {
+          "type": "boolean"
+        },
+        "seentime": {
+          "type": "date",
+          "format": "yyyy/MM/dd HH:mm:ss||yyyy-MM-dd HH:mm:ss||yyyy/MM/dd||yyyy-MM-dd",
+          "index": "not_analyzed"
+        }
+      }
+    }
+  }
+}
+
+

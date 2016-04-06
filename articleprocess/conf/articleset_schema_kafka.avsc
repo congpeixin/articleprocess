@@ -1,0 +1,13 @@
+{
+ "namespace": "cn.datapark.avro",
+ "type": "record",
+ "name": "kafkaarticleset",
+ "fields": [
+     {"name": "src_name", "type": "string"},
+     {"name": "dp_tag", "type": "string"},
+     {"name": "src_url", "type": "string"},
+     {"name": "seentime", "type": "string"},
+     {"name": "articlecount", "type": "int"},
+     {"name": "articleset","type": {"type":"array","items":cn.datapark.avro.kafkaarticle}}
+ ]
+}
