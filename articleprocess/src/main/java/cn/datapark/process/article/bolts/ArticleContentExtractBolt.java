@@ -31,8 +31,6 @@ import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.junit.Test;
-import scala.collection.script.End;
 
 import java.io.*;
 import java.nio.ByteBuffer;

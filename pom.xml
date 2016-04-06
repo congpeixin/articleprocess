@@ -12,8 +12,6 @@
 
     <modules>
         <module>process-core</module>
-        <!--<module>skuprocess</module>-->
-        <!--<module>imageprocess</module>-->
         <module>articleprocess</module>
     </modules>
 
@@ -36,19 +34,9 @@
             </dependency>
             <dependency>
                 <groupId>cn.datapark.storm.process</groupId>
-                <artifactId>skuprocess</artifactId>
-                <version>${skuprocess.verion}</version>
-            </dependency>
-            <!--<dependency>-->
-                <!--<groupId>cn.datapark.storm.process</groupId>-->
-                <!--<artifactId>imageprocess</artifactId>-->
-                <!--<version>${imageprocess.verion}</version>-->
-            <!--</dependency>-->
-<!--            <dependency>
-                <groupId>cn.datapark.storm.process</groupId>
                 <artifactId>articleprocess</artifactId>
                 <version>${articleprocess.verion}</version>
-            </dependency>-->
+            </dependency>
 
             <dependency>
                 <groupId>junit</groupId>
