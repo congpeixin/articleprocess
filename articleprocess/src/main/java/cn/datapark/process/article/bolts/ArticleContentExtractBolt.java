@@ -69,14 +69,9 @@ public class ArticleContentExtractBolt extends BaseRichBolt {
     private HashMap<String, Integer> TDIDFWords;
 
     // 测试用文件日志
-    FileWriter writer;
+
 
     public void prepare(Map map, TopologyContext topologyContext, OutputCollector outputCollector) {
-        try {
-            writer = new FileWriter("/Users/qiuwenyuan/Desktop/log.txt", true);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         collector = outputCollector;
         DistributedConfigUtil dcu = DistributedConfigUtil.getInstance();
 
@@ -269,11 +264,6 @@ public class ArticleContentExtractBolt extends BaseRichBolt {
         //请求接口 处理回调
         RequestModle requestModle = new RequestModle();
         requestModle.setUrl(as.getSrcURL());
-        try {
-            writer.write("deal url is " + as.getSrcURL() + "\n");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         requestModle.setWeight(wordsTFIDFValue.get("idf"));
         requestModle.setWords(wordsTFIDFValue.get("words"));
 
@@ -294,18 +284,14 @@ public class ArticleContentExtractBolt extends BaseRichBolt {
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
                     hBaseClient.updateSimilarArticle(as.getSrcURL(), url, LocalDateTime.parse(as.getArticleSeenTime(), formatter), wordsTFIDFValue.get("words"), wordsTFIDFValue.get("idf"));
                     long End = System.currentTimeMillis();
-//                    LOG.info("Similar article found, currentURL:" + as.getSrcURL() + " targetURL:" + url + "  time is  " + (End - Start));
-                    writer.write("currentURL: " + as.getSrcURL() + " targetURL: " + url + " return code  " + status + "\t");
-//                writer.write(wordsTFIDFValue.get("words")+"\t");
-//                writer.write(wordsTFIDFValue.get("idf")+"\t");
-                    writer.write("-------------------------" + "\n");
+                    LOG.info("Similar article found, currentURL:" + as.getSrcURL() + " targetURL:" + url + "  time is  " + (End - Start));
                     return url;
                 } else {
                     // Hash值无重复 插入成功
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
                     hBaseClient.insertNewArticle(as.getSrcURL(), LocalDateTime.parse(as.getArticleSeenTime(), formatter), wordsTFIDFValue.get("words"), wordsTFIDFValue.get("idf"));
                     long End = System.currentTimeMillis();
-//                LOG.info("Article insert, currentURL:" + as.getSrcURL()+" time is " + (End -Start) );
+                    LOG.info("Article insert, currentURL:" + as.getSrcURL() + " time is " + (End - Start));
                     return null;
                 }
             }
