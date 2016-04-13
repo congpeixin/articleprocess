@@ -255,6 +255,14 @@ public class ArticleContentExtractBolt extends BaseRichBolt {
      */
     private String checkSimilarArticlebySimHash(ArticleSet as) {
         long Start = System.currentTimeMillis();
+        String simhashURL = "";
+        try {
+            ConfigUtil.initConfig(ArticleContentExtractBolt.class.getClassLoader().getResourceAsStream(ConfigUtil.topoConfigfile));
+            ArticleExtractTopoConfig topoConfig = ConfigUtil.getConfigInstance();
+            simhashURL = topoConfig.getSimhashServerAddress();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         String content = "";
         for (String key : as.getKeySet()) {
             content += as.getArticle(key).getContent();
@@ -271,7 +279,7 @@ public class ArticleContentExtractBolt extends BaseRichBolt {
             long httpStart = System.currentTimeMillis();
 //            String response = HttpUtil.post("http://192.168.31.6:8080/simhashServer/v1/duplicateJudge/simhash", requestModle.toString());
 //            String response = HttpUtil.post("http://localhost:8080/duplicateJudge/simhash", requestModle.toString());
-            String response = HttpUtil.post("http://192.168.31.176:8080/duplicateJudge/simhash", requestModle.toString());
+            String response = HttpUtil.post(simhashURL, requestModle.toString());
             long httpEnd = System.currentTimeMillis();
 //            LOG.info("simhash request time is " + (httpEnd - httpStart));
             JSONObject object = JSONObject.fromObject(response);

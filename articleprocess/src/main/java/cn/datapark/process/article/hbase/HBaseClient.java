@@ -39,8 +39,7 @@ public class HBaseClient {
             return;
         }
         hbaseConf = HBaseConfiguration.create();
-        hbaseConf.set("hbase.zookeeper.quorum",
-                zookeeperQuorum);
+        hbaseConf.set("hbase.zookeeper.quorum", zookeeperQuorum);
         hbaseConf.set("hbase.zookeeper.property.clientPort", zookeeperPort);
         hbaseConf.set("hbase.cluster.distributed", isClusterDisctributed);
         hbaseConf.set("zookeeper.znode.parent", "/hbase-unsecure");//使用horton ambari安装的集群需要使用该设置

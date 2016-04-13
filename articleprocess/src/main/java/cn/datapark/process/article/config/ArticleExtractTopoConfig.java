@@ -62,6 +62,8 @@ public class ArticleExtractTopoConfig {
     private boolean isImageAlbumMetaSpoutForceFromStart;
     private long imageAlbumMetaSpoutStartOffsetTime;
 
+    // simhash 服务配置
+    private  String simhashServerAddress = null;
 
     synchronized public void load(InputStream configIn) {
 
@@ -124,7 +126,7 @@ public class ArticleExtractTopoConfig {
             imageRequestKafkaBrokerList = prop.getProperty("metadata.broker.list");
             imageRequestKafkaRequiredAcks = prop.getProperty("request.required.acks");
 
-
+            simhashServerAddress = prop.getProperty("simhash.server.url");
 
         }catch (Exception e) {
             LOG.error("failed to load article topo config");
@@ -410,6 +412,14 @@ public class ArticleExtractTopoConfig {
 
     public String getESIndexMappingFileName(){
         return esIndexMappingFileName;
+    }
+
+    public String getSimhashServerAddress() {
+        return simhashServerAddress;
+    }
+
+    public void setSimhashServerAddress(String simhashServerAddress) {
+        this.simhashServerAddress = simhashServerAddress;
     }
 
     public String getESIndexType(){

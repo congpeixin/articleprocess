@@ -1,7 +1,5 @@
 package cn.datapark.process.article.util;
 
-import net.sf.json.JSONObject;
-import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.wltea.analyzer.lucene.IKAnalyzer;
@@ -9,7 +7,6 @@ import org.wltea.analyzer.lucene.IKAnalyzer;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.StringReader;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -29,7 +26,8 @@ public class TFIDFUtil {
 
     static {
         try {
-            String path = TFIDFUtil.class.getResource("/ik/IDFWords.txt").getPath();
+//            String path = TFIDFUtil.class.getResource("/ik/IDFWords.txt").getPath(); 不带智能分词 库
+            String path = TFIDFUtil.class.getResource("/ik/SogouIDF.txt").getPath();
             System.out.println(path);
             BufferedReader br = new BufferedReader(new FileReader(path));
             String r = br.readLine();
@@ -42,7 +40,6 @@ public class TFIDFUtil {
                 }
                 r = br.readLine();
             }
-//            System.out.println("------------  map init ok ------ ");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -54,7 +51,8 @@ public class TFIDFUtil {
         // tfidf
         HashMap<String, Double> resTFValue = new HashMap<String, Double>();
         try {
-            Double docNum = 3074687d + 3078758d + 3311594d +3300059d;
+//            Double docNum = 3074687d + 3078758d + 3311594d +3300059d;   IDFWords 语料库的大小
+            Double docNum = 187355929d;
 
             IKAnalyzer analyzer = new IKAnalyzer();
             analyzer.setUseSmart(true);
@@ -67,14 +65,14 @@ public class TFIDFUtil {
             while (tokenStream.incrementToken()) {
                 String word = charTermAttribute.toString();
 //                System.out.println(word);
-                if (ShowChineseInUnicodeBlock.isContainChinese(word)){
+                if (ShowChineseInUnicodeBlock.isContainChinese(word)) {
                     if (resTF.get(word) == null) {
                         resTF.put(word, 1);
                     } else {
                         resTF.put(word, resTF.get(word) + 1);
                     }
                     count++;
-                }else if (ShowChineseInUnicodeBlock.isEnglish(word)){
+                } else if (ShowChineseInUnicodeBlock.isEnglish(word)) {
                     if (resTF.get(word) == null) {
                         resTF.put(word, 1);
                     } else {
@@ -88,47 +86,53 @@ public class TFIDFUtil {
             // 循环单词
             for (Map.Entry<String, Integer> tf : resTF.entrySet()) {
 //            resTFValue.put(tf.getKey(),Float.intBitsToFloat(tf.getValue()/count));
-                Double i = tf.getValue()/count;
-                if (doc.get(tf.getKey()) != null){
+                Double i = tf.getValue() / count;
+                if (doc.get(tf.getKey()) != null) {
 //                    float value = (float) Math.log(docNum / (Float.intBitsToFloat(doc.get(tf.getKey())+1)));
                     Double number = Double.valueOf(doc.get(tf.getKey()));
-                    Double value = (Double) Math.log(docNum /(number + 1.0d) );
+                    Double value = Math.log(docNum / (number + 1.0d));
                     resTFValue.put(tf.getKey(), value * i);
-                }else {
-                    Double value = (Double) Math.log(docNum);
+                } else {
+                    Double value = Math.log(docNum);
                     resTFValue.put(tf.getKey(), value * i);
                 }
             }
             StringBuffer words = new StringBuffer();
             StringBuffer idf = new StringBuffer();
+            StringBuffer tfs = new StringBuffer();
             int mapSize = 1;
-            for (Map.Entry<String, Double> tf : resTFValue.entrySet()){
+            for (Map.Entry<String, Double> tf : resTFValue.entrySet()) {
 
-                if (mapSize<  resTFValue.size()){
-                    words.append(tf.getKey()+",");
-                    idf.append(tf.getValue()+",");
-                }else {
+                if (mapSize < resTFValue.size()) {
+                    words.append(tf.getKey() + ",");
+                    idf.append(tf.getValue() + ",");
+                    tfs.append(resTF.get(tf.getKey()) + ",");
+                } else {
                     words.append(tf.getKey());
                     idf.append(tf.getValue());
+                    tfs.append(resTF.get(tf.getKey()));
                 }
-                mapSize ++;
+                mapSize++;
             }
+            int tfsSize = 1 ;
 //            System.out.println("==============map size is :" +doc.size() );
 //            System.out.println(words);
 //            System.out.println(idf);
             result.put("words", words.toString());
             result.put("idf", idf.toString());
-        }catch (Exception e){
+            // 计算LDA 预留 字段
+            result.put("tfs", idf.toString());
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return result;
     }
 }
 
-class RequestModle{
-    private  String url;
-    private  String words;
-    private  String weight;
+class RequestModle {
+    private String url;
+    private String words;
+    private String weight;
 
     public String getUrl() {
         return url;
