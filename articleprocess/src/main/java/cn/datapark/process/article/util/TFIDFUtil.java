@@ -4,9 +4,7 @@ import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.wltea.analyzer.lucene.IKAnalyzer;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.StringReader;
+import java.io.*;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -27,9 +25,11 @@ public class TFIDFUtil {
     static {
         try {
 //            String path = TFIDFUtil.class.getResource("/ik/IDFWords.txt").getPath(); 不带智能分词 库
-            String path = TFIDFUtil.class.getResource("/ik/SogouIDF.txt").getPath();
-            System.out.println(path);
-            BufferedReader br = new BufferedReader(new FileReader(path));
+            // 不打jar包的情况下 读取词典的方式不一样
+//            String path = TFIDFUtil.class.getResource("/ik/SogouIDF.txt").getPath(); 带智能 词库
+            // 打jar 包情况下读取文件
+            InputStream inputStream = TFIDFUtil.class.getClassLoader().getResourceAsStream("ik/SogouIDF.txt");
+            BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
             String r = br.readLine();
             while (r != null) {
                 String[] split = r.split("\t");
@@ -50,6 +50,7 @@ public class TFIDFUtil {
         HashMap<String, Integer> resTF = new HashMap<String, Integer>();
         // tfidf
         HashMap<String, Double> resTFValue = new HashMap<String, Double>();
+        System.out.println("初始化的大小"+doc.size());
         try {
 //            Double docNum = 3074687d + 3078758d + 3311594d +3300059d;   IDFWords 语料库的大小
             Double docNum = 187355929d;
@@ -121,7 +122,7 @@ public class TFIDFUtil {
             result.put("words", words.toString());
             result.put("idf", idf.toString());
             // 计算LDA 预留 字段
-            result.put("tfs", idf.toString());
+            result.put("tfs", tfs.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
