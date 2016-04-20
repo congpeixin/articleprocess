@@ -257,7 +257,7 @@ public class ArticleContentExtractBolt extends BaseRichBolt {
         long Start = System.currentTimeMillis();
         String simhashURL = "";
         try {
-            ConfigUtil.initConfig(ArticleContentExtractBolt.class.getClassLoader().getResourceAsStream(ConfigUtil.topoConfigfile));
+//            ConfigUtil.initConfig(ArticleContentExtractBolt.class.getClassLoader().getResourceAsStream(ConfigUtil.topoConfigfile));
             ArticleExtractTopoConfig topoConfig = ConfigUtil.getConfigInstance();
             simhashURL = topoConfig.getSimhashServerAddress();
         } catch (Exception e) {
@@ -274,7 +274,7 @@ public class ArticleContentExtractBolt extends BaseRichBolt {
         requestModle.setUrl(as.getSrcURL());
         requestModle.setWeight(wordsTFIDFValue.get("idf"));
         requestModle.setWords(wordsTFIDFValue.get("words"));
-
+        String tfs = wordsTFIDFValue.get("tfs");
         try {
             long httpStart = System.currentTimeMillis();
 //            String response = HttpUtil.post("http://192.168.31.6:8080/simhashServer/v1/duplicateJudge/simhash", requestModle.toString());
@@ -286,23 +286,23 @@ public class ArticleContentExtractBolt extends BaseRichBolt {
             String finger = object.getString("finger");
             String status = object.getString("status");
             String url = object.getString("url");
-            if (!url.equals(as.getSrcURL())) {
+//            if (!url.equals(as.getSrcURL())) {
                 if ("EXIST".equalsIgnoreCase(status)) {
                     // simhash 值存在 有相近的值
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-                    hBaseClient.updateSimilarArticle(as.getSrcURL(), url, LocalDateTime.parse(as.getArticleSeenTime(), formatter), wordsTFIDFValue.get("words"), wordsTFIDFValue.get("idf"));
+                    hBaseClient.updateSimilarArticle(as.getSrcURL(), url, LocalDateTime.parse(as.getArticleSeenTime(), formatter), wordsTFIDFValue.get("words"), wordsTFIDFValue.get("idf"),tfs);
                     long End = System.currentTimeMillis();
                     LOG.info("Similar article found, currentURL:" + as.getSrcURL() + " targetURL:" + url + "  time is  " + (End - Start));
                     return url;
                 } else {
                     // Hash值无重复 插入成功
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-                    hBaseClient.insertNewArticle(as.getSrcURL(), LocalDateTime.parse(as.getArticleSeenTime(), formatter), wordsTFIDFValue.get("words"), wordsTFIDFValue.get("idf"));
+                    hBaseClient.insertNewArticle(as.getSrcURL(), LocalDateTime.parse(as.getArticleSeenTime(), formatter), wordsTFIDFValue.get("words"), wordsTFIDFValue.get("idf"),tfs);
                     long End = System.currentTimeMillis();
                     LOG.info("Article insert, currentURL:" + as.getSrcURL() + " time is " + (End - Start));
                     return null;
                 }
-            }
+//            }
         } catch (Exception e) {
             e.printStackTrace();
             LOG.info("Similar article  error  happen URL:" + as.getSrcURL());
