@@ -273,7 +273,7 @@ public class ExtractedArticleHBaseClient extends HBaseClient {
      * @param words  单词
      * @param weight    权重
      */
-    public void updateSimilarArticle(String currentURL, String targetURL, LocalDateTime currentURLSeentime,String words,String weight) {
+    public void updateSimilarArticle(String currentURL, String targetURL, LocalDateTime currentURLSeentime,String words,String weight,String tfs) {
 
         byte[] byteRowkey = getRowkeybyScanCompareOp(".*" + targetURL, nameSpace, tableNanme);
         //更新相似文章sl字段(similarlist)
@@ -335,8 +335,14 @@ public class ExtractedArticleHBaseClient extends HBaseClient {
                 COL_TARGET_SIMILAR_WEIGHT,
                 weight,
                 getRowKey(currentURL, currentURLSeentime));
+        put(nameSpace,
+                tableNanme,
+                columnFamily,
+                "tfs",
+                tfs,
+                getRowKey(currentURL, currentURLSeentime));
     }
-    public void insertNewArticle(String currentURL, LocalDateTime currentURLSeentime,String words,String weight) {
+    public void insertNewArticle(String currentURL, LocalDateTime currentURLSeentime,String words,String weight,String tfs) {
 
 
         //以currentURL作为rowkey,targetURL作为value保存相似url
@@ -359,6 +365,13 @@ public class ExtractedArticleHBaseClient extends HBaseClient {
                 columnFamily,
                 COL_TARGET_SIMILAR_WEIGHT,
                 weight,
+                getRowKey(currentURL, currentURLSeentime));
+        // tf值
+        put(nameSpace,
+                tableNanme,
+                columnFamily,
+                "tfs",
+                tfs,
                 getRowKey(currentURL, currentURLSeentime));
     }
 
