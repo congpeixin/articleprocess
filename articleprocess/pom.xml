@@ -118,24 +118,24 @@
          <dependency>
              <groupId>com.heidata.nlp</groupId>
              <artifactId>aluextrator</artifactId>
-             <version>1.0.0</version>
-             <scope>system</scope>
-             <systemPath>${project.basedir}/lib/aluextrator-1.0.0.jar</systemPath>
+             <version>2.24</version>
+             <!--<scope>system</scope>-->
+             <!--<systemPath>${project.basedir}/lib/aluextrator-1.0.0.jar</systemPath>-->
 
          </dependency>
          <dependency>
-             <groupId>cn.edu.hfut.dmic.webcollector</groupId>
+             <groupId>cn.edu.hfut.dmic</groupId>
              <artifactId>WebCollector</artifactId>
              <version>2.24</version>
-             <scope>system</scope>
-             <systemPath>${project.basedir}/lib/webcollector-2.24-bin/WebCollector-2.24.jar</systemPath>
+             <!--<scope>system</scope>-->
+             <!--<systemPath>${basedir}/lib/webcollector-2.24-bin/WebCollector-2.24.jar</systemPath>-->
          </dependency>
         <dependency>
-            <groupId>org.wltea.analyzer.lucene.IKAnalyzer</groupId>
+            <groupId>org.wltea.analyzer</groupId>
             <artifactId>IKAnalyzer</artifactId>
             <version>2012FF_u1</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/IKAnalyzer2012FF_u1.jar</systemPath>
+            <!--<scope>system</scope>-->
+            <!--<systemPath>${basedir}/lib/IKAnalyzer2012FF_u1.jar</systemPath>-->
         </dependency>
         <dependency>
             <groupId>net.sf.json-lib</groupId>
@@ -147,6 +147,12 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.4</version>
+        </dependency>
+        <!--时间处理依赖-->
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.9.3</version>
         </dependency>
     </dependencies>
 
