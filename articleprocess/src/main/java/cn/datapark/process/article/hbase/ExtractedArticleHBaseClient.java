@@ -3,16 +3,21 @@ package cn.datapark.process.article.hbase;
 import cn.datapark.process.article.config.ArticleExtractTopoConfig;
 import cn.datapark.process.article.model.ArticlePage;
 import cn.datapark.process.article.model.ArticleSet;
+import cn.datapark.process.article.util.MD5Util;
 import org.apache.hadoop.hbase.util.Bytes;
+import org.apache.hadoop.io.MD5Hash;
 import org.apache.log4j.Logger;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import sun.security.provider.MD5;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by eason on 16/1/20.
@@ -191,7 +196,10 @@ public class ExtractedArticleHBaseClient extends HBaseClient {
             if (url.getHost().length() < 10) {
                 rowkey = String.format("%-10s", url.getHost()).replace(" ", "-") + ":" + seenTime.format(formatter) + ":" + urlString;
             } else {
-                rowkey = url.getHost().substring(0, 10) + seenTime.format(formatter) + urlString;
+//                rowkey = url.getHost().substring(0, 10) + seenTime.format(formatter) + urlString;
+
+                // 一级域名10位 不足0补齐 # time # url MD5 编码
+                rowkey = addZeroForNum(urlString,10)+"#" + seenTime.format(formatter) +"#"+ MD5Util.getMD5Str(urlString) ;
             }
             return rowkey;
         } catch (MalformedURLException e) {
@@ -199,7 +207,26 @@ public class ExtractedArticleHBaseClient extends HBaseClient {
         }
         return null;
     }
-
+    public static String addZeroForNum(String url, int strLength) {
+        Pattern p = Pattern.compile("(?<=http://|\\.)[^.]*?\\.(com|cn|net|org|biz|info|cc|tv)", Pattern.CASE_INSENSITIVE);
+        Matcher matcher = p.matcher(url);
+        matcher.find();
+        String group = matcher.group();
+        int strLen = group.length();
+        if (strLen < 10 ){
+            StringBuffer sb = null;
+            while (strLen < strLength) {
+                sb = new StringBuffer();
+                sb.append(group).append("0");//右补0
+                group = sb.toString();
+                strLen = group.length();
+            }
+        }else {
+            group=group.substring(0,10);
+        }
+//        System.out.println(group);
+        return group;
+    }
 
     //相似URL list
     public static String COL_SIMILAR_URL_LIST = "sul";
@@ -216,7 +243,7 @@ public class ExtractedArticleHBaseClient extends HBaseClient {
      * @param targetURL  需要更新的目标文章url
      */
     public void updateSimilarArticle(String currentURL, String targetURL, LocalDateTime currentURLSeentime) {
-
+        // 原来的处理逻辑 rowkey 没改
         byte[] byteRowkey = getRowkeybyScanCompareOp(".*" + targetURL, nameSpace, tableNanme);
         //更新相似文章sl字段(similarlist)
         if (byteRowkey == null) {
@@ -275,7 +302,11 @@ public class ExtractedArticleHBaseClient extends HBaseClient {
      */
     public void updateSimilarArticle(String currentURL, String targetURL, LocalDateTime currentURLSeentime,String words,String weight,String tfs) {
 
-        byte[] byteRowkey = getRowkeybyScanCompareOp(".*" + targetURL, nameSpace, tableNanme);
+        //getrowkey 方法改变 需要改变这个方法
+        String md5Str = MD5Util.getMD5Str(targetURL);
+
+        byte[] byteRowkey = getRowkeybyScanCompareOp(".*#" + md5Str, nameSpace, tableNanme);
+//        byte[] byteRowkey = getRowkeybyScanCompareOp(targetURL.substring(7, 17)+".*" + targetURL, nameSpace, tableNanme);
         //更新相似文章sl字段(similarlist)
         if (byteRowkey == null) {
 //            LOG.error("can not find row key by url:" + targetURL);
@@ -290,7 +321,7 @@ public class ExtractedArticleHBaseClient extends HBaseClient {
                     COL_SIMILAR_URL_LIST,
                     currentURL,
                     Bytes.toString(byteRowkey))) {
-//                LOG.error("failed to insert simalar article url to target. current url:" + currentURL + " target url:" + targetURL);
+                LOG.error("failed to insert simalar article url to target. current url:" + currentURL + " target url:" + targetURL);
                 return;
 
             }
@@ -302,7 +333,7 @@ public class ExtractedArticleHBaseClient extends HBaseClient {
                     COL_SIMILAR_URL_LIST,
                     Bytes.toString(bytesSimilarURLList) + "," + currentURL,
                     Bytes.toString(byteRowkey))) {
-//                LOG.error("failed to update simalar article url to target. current url:" + currentURL + " target url:" + targetURL);
+                LOG.error("failed to update simalar article url to target. current url:" + currentURL + " target url:" + targetURL);
                 return;
 
 
