@@ -3,6 +3,7 @@ package cn.datapark.process.article.hbase;
 import cn.datapark.process.article.avro.decoder.ArticleSetAvroRecord;
 import cn.datapark.process.article.config.ArticleExtractTopoConfig;
 import cn.datapark.process.article.model.ArticleSet;
+import cn.datapark.process.article.util.MD5Util;
 import org.apache.log4j.Logger;
 
 import java.net.MalformedURLException;
@@ -118,8 +119,8 @@ public class RawArticleHBaseClient extends ExtractedArticleHBaseClient {
     }
 
     private String getRowKey(String urlString, LocalDateTime seenTime) {
-
-
+        // 原来的row生成规则
+/*
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
             URL url = new URL(urlString);
@@ -129,6 +130,24 @@ public class RawArticleHBaseClient extends ExtractedArticleHBaseClient {
                 rowkey = String.format("%-10s",url.getHost()).replace(" ","-") + ":" + seenTime.format(formatter)+ ":" + urlString ;
             }else{
                 rowkey = url.getHost().substring(0,10)  + seenTime.format(formatter) + urlString ;
+            }
+            return rowkey;
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return null;*/
+
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+            URL url = new URL(urlString);
+            String rowkey = null;
+            //String rowkey = url.getHost().substring(0,8) + ":" + seenTime.toEpochSecond(ZoneOffset.of("+08:00"))+ ":" + urlString;
+            if (url.getHost().length() < 10) {
+                rowkey = String.format("%-10s", url.getHost()).replace(" ", "-") + ":" + seenTime.format(formatter) + ":" + urlString;
+            } else {
+//                rowkey = url.getHost().substring(0, 10) + seenTime.format(formatter) + urlString;
+                // 一级域名10位 不足0补齐 # time # url MD5 编码
+                rowkey = addZeroForNum(urlString,10)+"#" + seenTime.format(formatter) +"#"+ MD5Util.getMD5Str(urlString) ;
             }
             return rowkey;
         } catch (MalformedURLException e) {
