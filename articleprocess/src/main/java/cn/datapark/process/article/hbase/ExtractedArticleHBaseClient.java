@@ -208,7 +208,7 @@ public class ExtractedArticleHBaseClient extends HBaseClient {
         return null;
     }
     public static String addZeroForNum(String url, int strLength) {
-        Pattern p = Pattern.compile("(?<=http://|\\.)[^.]*?\\.(com|cn|net|org|biz|info|cc|tv)", Pattern.CASE_INSENSITIVE);
+        Pattern p = Pattern.compile("(?<=http://|\\.)[^.]*?\\.(com|cn|net|org|biz|info|cc|tv|co.uk|eu|ac.uk|archi)", Pattern.CASE_INSENSITIVE);
         Matcher matcher = p.matcher(url);
         matcher.find();
         String group = matcher.group();
@@ -227,6 +227,7 @@ public class ExtractedArticleHBaseClient extends HBaseClient {
 //        System.out.println(group);
         return group;
     }
+
 
     //相似URL list
     public static String COL_SIMILAR_URL_LIST = "sul";
